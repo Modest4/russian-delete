@@ -17,7 +17,7 @@
 */
 
 
-const fs = require('fs')
+const fs = require('fs-extra')
 
 let levels = ["pussy", "russian-pussy", "cow-boy", "russian", "drunk-russian"]
 let lvl = process.argv[2]
@@ -36,11 +36,17 @@ if (lvl === undefined) throw "What kind of game do you wanna play? Are you a pus
 if (folderPath === undefined && lvl === levels[0] || folderPath === undefined && lvl === levels[1]) throw `You, ${lvl}, have to tell me in which folder I have to work`
 
 let deleteFile = function(filePath) {
-	fs.unlink(filePath, (err) => {
-		if (err){
-			return err
-		}
+	fs.remove(filePath, (err) => {
+		if (err) return err
 	})
+	console.log(`The file ${filePath} is now gone so far...`)
+}
+
+let deleteFolder = function(folderPath) {
+	fs.remove(folderPath, err => {
+		if (err) return console.log(err)
+	})
+	console.log(`The folder ${folderPath} is now gone so far...`)
 }
 
 fs.readdir(dir, (err, files) => {
@@ -49,19 +55,16 @@ fs.readdir(dir, (err, files) => {
 	let theFile = Math.floor(Math.random() * files.length)
 	console.log(`On va supprimer le fichier ${files[theFile]}`)
 
-	files.forEach((file, position) => {		
-		if(position === theFile) {		/* check if each of the content is a file */
-			if (fs.lstatSync(dir + "/" + file).isFile()) {
-				let fullPath = dir + "/" + file
+	files.forEach((file, position) => {	
+		let fullPath = dir + "/" + file
+		if(position === theFile) {		
+			if (fs.lstatSync(fullPath).isFile()) {		/* check if each of the content is a file */
+				
 				deleteFile(fullPath, (err) => {
-					if (err) {
-						throw err
-					} else {
-						console.log(`${file} a été supprimé`)
-					}
+					if (err) throw err
 				})
 			} else {
-				console.log("c'est un dossier, non un fichier", file)
+				deleteFolder(fullPath)
 			}
 		}
 	})
