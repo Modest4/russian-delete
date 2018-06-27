@@ -16,11 +16,6 @@
 				/'"^"               "^"`\
 */
 
-
-const fs = require('fs-extra')
-
-let levels = ["pussy", "russian-pussy", "cow-boy", "russian", "drunk-russian"]
-let lvl = process.argv[2]
 /*
 	Here are the differents levels available :
 		- pussy (potentially delete a random file in a specific folder) + Required path to folder
@@ -29,11 +24,46 @@ let lvl = process.argv[2]
 		- russian (delete a file)
 		- drunk-russian (delete a folder HELL YEA)
 */
-let folderPath = process.argv[3]
-let dir = "./tmp"
 
-if (lvl === undefined) throw "What kind of game do you wanna play? Are you a pussy, a russian-pussy, a cow-boy, a russian or a drunk-russian ? How stupid are you dude?"
+const fs = require('fs-extra')
+
+
+let Player = {
+	play : this.isFire() || return "You lucky bastard, not this time...",
+	levels : ["pussy", "russian-pussy", "cow-boy", "russian", "drunk-russian"],
+	level : this.levels[process.argv[2]],
+	dirPath : process.argv[3] || "./tmp",
+	isFire : () =>  {return Math.floor(Math.random() * 6) === 0},
+	delete : filePath => {
+		fs.remove(filePath, (err) => {
+			if (err) return console.log(err)
+			console.log(`${filePath} has been deleted`)
+		})
+	},
+	pickInFolder : (this.dirPath, (err, files) => {
+		if (err) return console.log(err)
+		let theFile = Math.floor(Math.random() * files.length)
+		console.log(`On va supprimer le fichier ${files[theFile]}`)
+		files.forEach((file, position) => {	
+			let fullPath = dir + "/" + file
+			if(position === theFile) {		
+				if (fs.lstatSync(fullPath).isFile()) {		/* check if each of the content is a file */
+					deleteFile(fullPath, (err) => {
+						if (err) throw err
+					})
+				} else {
+					deleteFolder(fullPath)
+				}
+			}
+		})
+	})
+}
+
+if (Player.lvl === undefined) throw "What kind of game do you wanna play? Are you a pussy, a russian-pussy, a cow-boy, a russian or a drunk-russian ? How stupid are you dude?"
 if (folderPath === undefined && lvl === levels[0] || folderPath === undefined && lvl === levels[1]) throw `You, ${lvl}, have to tell me in which folder I have to work`
+
+
+
 
 let deleteFile = function(filePath) {
 	fs.remove(filePath, (err) => {
