@@ -107,8 +107,8 @@ fs.readdir(dir, (err, files) => {
 
 	✓ Function for deleting files ✓
 	✓ Function for deleting folder ✓
+	✓ Function randomize isShot ? (1/6) ✓
 	✘ Move this into a module ✘
-	✘ Function randomize isShot ? (1/6) ✘
 	✘ Function to find a random folder from C ✘
 	❄ Create a module which recursively search a random place on the disk ❄
 
